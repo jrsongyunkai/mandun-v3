@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>loading</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- <script src="/static/js/crypt.min.js"></script>
+    <script src="/static/js/vue.min.js"></script>
+    <script src="/static/js/vuex.min.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+    <script src="/static/js/vue-router.min.js"></script>
+    <script src="/static/js/config.js"></script> -->
+    <% for (var i in htmlWebpackPlugin.options.js&&htmlWebpackPlugin.options.js) { %>
+      <script src="<%= htmlWebpackPlugin.options.js[i] %>"></script>
+    <% } %>
+    <script>
+      var qs = document.location.search
+      qs = qs.indexOf('?') === -1 ? '' : qs.substring(qs.indexOf('?') + 1)
+      var identity = qs && /^[0-9A-Za-z]{8}$/.test(qs) ? qs : null
+      if (identity) {
+        var curTime = new Date()
+        curTime.setTime(curTime.getTime() + 24 * 60 * 60 * 1000)
+        document.cookie = 'IDENTITY=' + escape(identity) + ';expires=' + curTime.toGMTString()
+      }
+    </script>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

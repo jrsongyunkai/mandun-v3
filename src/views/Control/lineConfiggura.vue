@@ -810,14 +810,17 @@ export default {
                 this.pushList = res.data[0].digitalIns
                 this.outputList = res.data[0].digitalOuts
                 this.configuruation = false
-                // store.commit('Tcequipment', '输入模拟量1')
-                console.log(this.AnalogList)
+                store.commit('lineType', 'IO')
+                let lineType = 'IO'
+                console.log(this.$store.state.lineType, '====this.$store.state.lineType')
+                // console.log(this.AnalogList)
                 this.$emit(
                   'updateData',
                   this.AnalogList[0].name,
                   this.AnalogList[1].name,
                   this.AnalogList[2].name,
-                  this.AnalogList[3].name
+                  this.AnalogList[3].name,
+                  lineType
                 )
               } else {
                 if (res.data.length > 0) this.details = res.data[0]

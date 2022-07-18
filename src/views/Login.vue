@@ -113,7 +113,7 @@ export default {
     } else {
       this.changeLang('zh')
     }
-    if (window.location.host.toLowerCase().indexOf('snd') === -1 || document.cookie.indexOf('IDENTITY=') !== -1) {
+    if (window.location.host.toLowerCase().indexOf('snd02') === -1 || document.cookie.indexOf('IDENTITY=') !== -1) {
       this.prevStatus = false
     }
     /* eslint-disable */

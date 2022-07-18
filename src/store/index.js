@@ -121,7 +121,8 @@ const state = {
   alarmForConfig: [],
   customAlarm: '',
   classifyLabel: '',
-  Tcequipment: ''
+  Tcequipment: '',
+  lineType: ''
 }
 export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
@@ -130,6 +131,9 @@ export default new Vuex.Store({
   mutations: {
     pageCustom: (state, v) => {
       state.pageCustom = v
+    },
+    lineType: (state, v) => {
+      state.lineType = v
     },
     Tcequipment: (state, v) => {
       state.Tcequipment = v

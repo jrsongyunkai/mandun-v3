@@ -5,7 +5,10 @@
         <el-col class="info">
           <Info :mac="param.mac"></Info>
         </el-col>
-        <el-col class="mantunsci" v-if="param.equipmentType === 1">
+        <el-col class="mantunsci" v-if="param.equipmentType === 1&& ocDevice !== 'IO'">
+            <LineChart :options="residualCurrent" :onGetEchartsInstance="onGetEchartsInstance"></LineChart>
+        </el-col>
+        <el-col class="mantunsci" v-if="param.equipmentType === 1&& ocDevice === 'IO'">
           <TcequipmentLine
             :options="residuals"
             ref="residuals"
@@ -13,12 +16,15 @@
             :onGetEchartsInstance="onGetEchartsInstance"
           ></TcequipmentLine>
         </el-col>
-        <el-col class="mantunsci" v-if="param.equipmentType === 1">
-          <TcequipmentLine
+        <el-col class="mantunsci" v-if="param.equipmentType === 1&& ocDevice !== 'IO'">
+            <LineChart :options="temperature" :onGetEchartsInstance="onGetEchartsInstance"></LineChart>
+        </el-col>
+        <el-col  class="mantunsci" v-if="param.equipmentType === 1&& ocDevice === 'IO'">
+           <TcequipmentLine
             :options="temPeraTure"
             :title="temPeraTureTitle"
             :onGetEchartsInstance="onGetEchartsInstance"
-          ></TcequipmentLine>
+          > wendu</TcequipmentLine>
         </el-col>
         <el-col
           class="mantunsci"
@@ -90,7 +96,30 @@
           <LineChart :options="watermoreChart"></LineChart>
         </el-col>
       </el-col>
-      <el-col :span="24" v-if="param.equipmentType === 1">
+      <!-- 808空开 -->
+      <el-col :span="24" v-if="param.equipmentType === 1 && ocDevice === 'IO'">
+        <el-col class="info"
+          ><LineConfiggur
+            :param="param"
+            @updateData="updateData(arguments)"
+          ></LineConfiggur
+        ></el-col>
+          <el-col class="mantunsci">
+           <TcequipmentLine
+            :options="volTage"
+            :title="volTageTitle"
+            :onGetEchartsInstance="onGetEchartsInstance"
+          ></TcequipmentLine>
+        </el-col>
+         <el-col class="mantunsci">
+           <TcequipmentLine
+            :options="curRents"
+            :title="curRentsTitle"
+            :onGetEchartsInstance="onGetEchartsInstance"
+          ></TcequipmentLine>
+        </el-col>
+      </el-col>
+       <el-col :span="24" v-if="param.equipmentType === 1 && ocDevice !== 'IO'">
         <el-col class="info"
           ><LineConfiggur
             :param="param"
@@ -98,18 +127,10 @@
           ></LineConfiggur
         ></el-col>
         <el-col class="mantunsci">
-          <TcequipmentLine
-            :options="volTage"
-            :title="volTageTitle"
-            :onGetEchartsInstance="onGetEchartsInstance"
-          ></TcequipmentLine>
+          <LineChart :options="voltage"  :onGetEchartsInstance="onGetEchartsInstance"></LineChart>
         </el-col>
         <el-col class="mantunsci">
-          <TcequipmentLine
-            :options="curRents"
-            :title="curRentsTitle"
-            :onGetEchartsInstance="onGetEchartsInstance"
-          ></TcequipmentLine>
+          <LineChart :options="current"  :onGetEchartsInstance="onGetEchartsInstance"></LineChart>
         </el-col>
       </el-col>
       <el-col :span="24"
@@ -258,38 +279,39 @@
             <el-row>
               <div style="height: 750px">
                 <el-scrollbar style="height: 100%">
-                  <div v-if="tableDatatitle === '808'">
+                  <div v-if="ocDevice === 'IO'">
+                    <!-- 双击进去的图表 -->
                     <el-row  v-if="param.equipmentType === 1">
                       <TcequipmentLine
                         :options="residuals"
                         ref="residuals"
                         :title="residualsTitle"
-                        :onGetEchartsInstance="onGetEchartsInstance"
+
                       ></TcequipmentLine>
                     </el-row>
                     <el-row  v-if="param.equipmentType === 1">
                       <TcequipmentLine
                         :options="temPeraTure"
                         :title="temPeraTureTitle"
-                        :onGetEchartsInstance="onGetEchartsInstance"
+
                       ></TcequipmentLine>
                     </el-row>
                     <el-row >
                       <TcequipmentLine
                         :options="volTage"
                         :title="volTageTitle"
-                        :onGetEchartsInstance="onGetEchartsInstance"
+
                       ></TcequipmentLine>
                     </el-row>
                     <el-row >
                       <TcequipmentLine
                         :options="curRents"
                         :title="curRentsTitle"
-                        :onGetEchartsInstance="onGetEchartsInstance"
+
                       ></TcequipmentLine>
                     </el-row>
                   </div>
-                 <div v-else>
+                 <div v-if="ocDevice !== 'IO'">
                     <el-col>
                     <LineChart :options="electricCurrent"></LineChart>
                   </el-col>
@@ -364,6 +386,7 @@ export default {
   },
   data () {
     return {
+      ocDevice: '',
       watermoreChart: {
         xAxis: [],
         series: [],
@@ -759,6 +782,7 @@ export default {
   },
   mounted () {
     this.init()
+    this.queryRouteList()
     if (this.param.equipmentType === 18) {
       this.queryRenkeChnl()
     }
@@ -795,6 +819,8 @@ export default {
             this.queryChannelHistory()
           }
         }
+        // this.queryChtqdqMeterReadingData()
+        // this.queryLineListData()
       } else if (this.param.equipmentType === 6) {
         this.querySmoke()
       } else if (this.param.equipmentType === 12) {
@@ -807,8 +833,7 @@ export default {
       this.temPeraTureTitle = val[1]
       this.volTageTitle = val[2]
       this.curRentsTitle = val[3]
-      // this.$refs.residuals.init()
-      // this.queryChannelHistory()
+      this.ocDevice = val[4]
     },
     clickAlarm () {
       this.$refs.MaintenanceRecords.init()
@@ -818,6 +843,7 @@ export default {
         echart.getZr().off('dblclick')
         echart.getZr().on('dblclick', () => {
           this.dialogVisible = true
+
           this.queryRouteList()
         })
       }
@@ -831,6 +857,7 @@ export default {
           if (res.datas.length > 0) {
             this.tableData = res.datas
             this.tableDatatitle = this.tableData[0].title
+            // console.log(this.tableDatatitle)
             // console.log(res.datas, '=====res.datas')
             if (this.param.equipmentType === (1 || 2)) {
               this.queryLineListData(this.tableData[0].addr)
@@ -873,12 +900,18 @@ export default {
             let xAxis = res.data.xAxis.map(function (str) {
               return str.split(' ')[1]
             })
-            this.electricCurrent.xAxis = xAxis
-            this.lineTemperature.xAxis = xAxis
-            this.lineVoltage.xAxis = xAxis
-            this.power.xAxis = xAxis
-            this.powerFactor.xAxis = xAxis
-            this.leakageCurrent.xAxis = xAxis
+            // console.log(res, '===dierge')
+            if (res.data.analogIn1) {
+              this.ocDevice = 'IO'
+            } else {
+              this.electricCurrent.xAxis = xAxis
+              this.lineTemperature.xAxis = xAxis
+              this.lineVoltage.xAxis = xAxis
+              this.power.xAxis = xAxis
+              this.powerFactor.xAxis = xAxis
+              this.leakageCurrent.xAxis = xAxis
+            }
+
             if (res.data.lstGLd) {
               this.leakageCurrent.series = [
                 {
@@ -907,6 +940,7 @@ export default {
                     symbolSize: 2
                   }
                 ]
+                // console.log(res.data.lstGV, '======== this.lineVoltage')
               } else {
                 this.lineVoltage.series = [
                   {
@@ -968,6 +1002,7 @@ export default {
                     symbolSize: 2
                   }
                 ]
+                // console.log(this.electricCurrent, '====== this.electricCurrent')
               } else {
                 this.electricCurrent.series = [
                   {
@@ -1032,6 +1067,7 @@ export default {
                     symbolSize: 2
                   }
                 ]
+                // console.log(res.data.lstGT, '==========温度')
               } else {
                 this.lineTemperature.series = [
                   {
@@ -1260,16 +1296,44 @@ export default {
             })
             //  if(res.data.analogIn1 ||res.data.analogIn2||res.data.analogIn3||res.data.analogIn4){
             // }
+            // console.log(res, '=================res')
             this.residualCurrent.xAxis = xAxis
+            this.leakageCurrent.xAxis = xAxis
             this.residuals.xAxis = xAxis
             this.voltage.xAxis = xAxis
+            this.lineVoltage.xAxis = xAxis
             this.volTage.xAxis = xAxis
             this.temperature.xAxis = xAxis
+            this.lineTemperature.xAxis = xAxis
             this.temPeraTure.xAxis = xAxis
             this.current.xAxis = xAxis
+            this.electricCurrent.xAxis = xAxis
             this.curRents.xAxis = xAxis
+            if (res.data.analogIn1) {
+              this.ocDevice = 'IO'
+            }
             if (res.data.lstGLd || res.data.analogIn1) {
               this.residualCurrent.series = [
+                {
+                  name: this.$t('system.remaining') + this.$t('main.ampere'),
+                  type: 'line',
+                  data: res.data.lstGLd,
+                  smooth: true,
+                  showAllSymbol: true,
+                  symbolSize: 2
+                },
+                {
+                  name: this.$t('table.status'),
+                  type: 'line',
+                  data: res.data.ocList,
+                  color: '#909399',
+                  smooth: false,
+                  showAllSymbol: false,
+                  symbolSize: 0,
+                  lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
+                }
+              ]
+              this.leakageCurrent.series = [
                 {
                   name: this.$t('system.remaining') + this.$t('main.ampere'),
                   type: 'line',
@@ -1298,23 +1362,36 @@ export default {
                   showAllSymbol: true,
                   symbolSize: 2
                 }
-                // {
-                //   name: this.$t('table.status'),
-                //   type: 'line',
-                //   data: res.data.ocList,
-                //   color: '#909399',
-                //   smooth: false,
-                //   showAllSymbol: false,
-                //   symbolSize: 0,
-                //   lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
-                // }
+
               ]
             } else {
-              this.residualCurrent.series = []
+              this.leakageCurrent.series = []
               this.residuals.series = []
             }
             if (res.data.lstGV || res.data.analogIn3) {
               if (!res.data.lstAV) {
+                this.lineVoltage.series = [
+                  {
+                    name: this.$t('main.volt'),
+                    type: 'line',
+                    data: res.data.lstGV,
+                    color: '#71e1e4',
+                    lineStyle: { color: '#71e1e4' },
+                    smooth: true,
+                    showAllSymbol: true,
+                    symbolSize: 2
+                  },
+                  {
+                    name: this.$t('table.status'),
+                    type: 'line',
+                    data: res.data.ocList,
+                    color: '#909399',
+                    smooth: false,
+                    showAllSymbol: false,
+                    symbolSize: 0,
+                    lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
+                  }
+                ]
                 this.voltage.series = [
                   {
                     name: this.$t('main.volt'),
@@ -1416,7 +1493,7 @@ export default {
                   {
                     name: '模拟输入量3',
                     type: 'line',
-                    data: res.data.analogIn2,
+                    data: res.data.analogIn3,
                     color: '#e062ea',
                     lineStyle: { color: '#e062ae' },
                     smooth: true,
@@ -1471,6 +1548,28 @@ export default {
             }
             if (res.data.lstGT || res.data.analogIn2) {
               if (!res.data.lstAT) {
+                this.lineTemperature.series = [
+                  {
+                    name: this.$t('menu.temperature'),
+                    type: 'line',
+                    data: res.data.lstGT,
+                    color: '#71e1e4',
+                    lineStyle: { color: '#71e1e4' },
+                    smooth: true,
+                    showAllSymbol: true,
+                    symbolSize: 2
+                  },
+                  {
+                    name: this.$t('table.status'),
+                    type: 'line',
+                    data: res.data.ocList,
+                    color: '#909399',
+                    smooth: false,
+                    showAllSymbol: false,
+                    symbolSize: 0,
+                    lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
+                  }
+                ]
                 this.temperature.series = [
                   {
                     name: this.$t('menu.temperature'),
@@ -1645,6 +1744,28 @@ export default {
             }
             if (res.data.lstGA || res.data.analogIn4) {
               if (!res.data.lstAA) {
+                this.electricCurrent.series = [
+                  {
+                    name: this.$t('control.current'),
+                    type: 'line',
+                    data: res.data.lstGA,
+                    color: '#71e1e4',
+                    lineStyle: { color: '#71e1e4' },
+                    smooth: true,
+                    showAllSymbol: true,
+                    symbolSize: 2
+                  },
+                  {
+                    name: this.$t('table.status'),
+                    type: 'line',
+                    data: res.data.ocList,
+                    color: '#909399',
+                    smooth: false,
+                    showAllSymbol: false,
+                    symbolSize: 0,
+                    lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
+                  }
+                ]
                 this.current.series = [
                   {
                     name: this.$t('control.current'),
@@ -2420,82 +2541,89 @@ export default {
       queryChtqdqMeterReadingDataHistory(params)
         .then(res => {
           if (res.success) {
-            let xAxis = []
-            if (JSON.stringify(res.data) !== '{}') {
-              xAxis = res.data.timeList.map(function (str) {
-                return str.split(' ')[1]
-              })
+            if (Object.keys(res.data).length > 0) {
+              let xAxis = []
+              if (JSON.srtingify(res.data) !== '{}') {
+                xAxis = res.data.timeList.map(function (str) {
+                  return str.split(' ')[1]
+                })
+              }
+              this.smartMeterVoltage.xAxis = xAxis
+              this.smartMeterAmpere.xAxis = xAxis
+              this.smartMeterVoltage.series = [
+                {
+                  name: this.$t('main.volt'),
+                  type: 'line',
+                  data: res.data.lstGV,
+                  color: '#e062ea',
+                  lineStyle: { color: '#e062ae' },
+                  smooth: true
+                },
+                {
+                  name: 'A' + this.$t('control.phase') + this.$t('main.volt'),
+                  type: 'line',
+                  data: res.data.volA,
+                  color: '#71e1e4',
+                  lineStyle: { color: '#71e1e4' },
+                  smooth: true
+                },
+                {
+                  name: 'B' + this.$t('control.phase') + this.$t('main.volt'),
+                  type: 'line',
+                  data: res.data.volB,
+                  color: '#ffdb5c',
+                  lineStyle: { color: '#ffdb5c' },
+                  smooth: true
+                },
+                {
+                  name: 'C' + this.$t('control.phase') + this.$t('main.volt'),
+                  type: 'line',
+                  data: res.data.volC,
+                  color: '#c23531',
+                  lineStyle: { color: '#c23531' },
+                  smooth: true
+                }
+              ]
+              this.smartMeterAmpere.series = [
+                {
+                  name: this.$t('menu.temperature'),
+                  type: 'line',
+                  data: res.data.lstGT,
+                  color: '#e062ea',
+                  lineStyle: { color: '#e062ae' },
+                  smooth: true
+                },
+                {
+                  name: 'A' + this.$t('control.phase') + this.$t('main.ampere'),
+                  type: 'line',
+                  data: res.data.curA,
+                  color: '#71e1e4',
+                  lineStyle: { color: '#71e1e4' },
+                  smooth: true
+                },
+                {
+                  name: 'B' + this.$t('control.phase') + this.$t('main.ampere'),
+                  type: 'line',
+                  data: res.data.curB,
+                  color: '#ffdb5c',
+                  lineStyle: { color: '#ffdb5c' },
+                  smooth: true
+                },
+                {
+                  name: 'C' + this.$t('control.phase') + this.$t('main.ampere'),
+                  type: 'line',
+                  data: res.data.curC,
+                  color: '#c23531',
+                  lineStyle: { color: '#c23531' },
+                  smooth: true
+                }
+              ]
+            } else {
+              // this.$message({
+              //   message: '数据为空',
+              //   type: 'error'
+              // })
             }
-            this.smartMeterVoltage.xAxis = xAxis
-            this.smartMeterAmpere.xAxis = xAxis
-            this.smartMeterVoltage.series = [
-              {
-                name: this.$t('main.volt'),
-                type: 'line',
-                data: res.data.lstGV,
-                color: '#e062ea',
-                lineStyle: { color: '#e062ae' },
-                smooth: true
-              },
-              {
-                name: 'A' + this.$t('control.phase') + this.$t('main.volt'),
-                type: 'line',
-                data: res.data.volA,
-                color: '#71e1e4',
-                lineStyle: { color: '#71e1e4' },
-                smooth: true
-              },
-              {
-                name: 'B' + this.$t('control.phase') + this.$t('main.volt'),
-                type: 'line',
-                data: res.data.volB,
-                color: '#ffdb5c',
-                lineStyle: { color: '#ffdb5c' },
-                smooth: true
-              },
-              {
-                name: 'C' + this.$t('control.phase') + this.$t('main.volt'),
-                type: 'line',
-                data: res.data.volC,
-                color: '#c23531',
-                lineStyle: { color: '#c23531' },
-                smooth: true
-              }
-            ]
-            this.smartMeterAmpere.series = [
-              {
-                name: this.$t('menu.temperature'),
-                type: 'line',
-                data: res.data.lstGT,
-                color: '#e062ea',
-                lineStyle: { color: '#e062ae' },
-                smooth: true
-              },
-              {
-                name: 'A' + this.$t('control.phase') + this.$t('main.ampere'),
-                type: 'line',
-                data: res.data.curA,
-                color: '#71e1e4',
-                lineStyle: { color: '#71e1e4' },
-                smooth: true
-              },
-              {
-                name: 'B' + this.$t('control.phase') + this.$t('main.ampere'),
-                type: 'line',
-                data: res.data.curB,
-                color: '#ffdb5c',
-                lineStyle: { color: '#ffdb5c' },
-                smooth: true
-              },
-              {
-                name: 'C' + this.$t('control.phase') + this.$t('main.ampere'),
-                type: 'line',
-                data: res.data.curC,
-                color: '#c23531',
-                lineStyle: { color: '#c23531' },
-                smooth: true
-              }
-            ]
           } else if (res.code === '-1') {
           } else {
             this.$message({

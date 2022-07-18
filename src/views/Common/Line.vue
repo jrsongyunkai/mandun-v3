@@ -34,13 +34,12 @@ export default {
     this.uniqueID = uuid()
   },
   mounted () {
-    this.$nextTick(() => {
-      this.init()
-    })
+    this.init()
   },
   methods: {
     init () {
       let that = this
+
       const options = {
         title: {
           show: this.options.title.show,
@@ -156,7 +155,8 @@ export default {
         if (newVal) {
           this.options.xAxis = newVal.xAxis
           this.options.series = newVal.series
-          setTimeout(this.init, 500)
+          // setTimeout(this.init, 500)
+          this.init()
         }
       },
       deep: true

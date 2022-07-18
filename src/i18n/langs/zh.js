@@ -139,7 +139,7 @@ module.exports = {
     alarmClassificationStatisticsTable: '告警分类统计表',
     alarmHistoryDetailsTable: '告警历史详情表',
     projectelectricStatisticalTable: '项目电量统计表',
-    projectelectricStatistical: '项目电量',
+    projectelectricStatistical: '导出项目电量',
     DevicelectricStatistical: '设备电量',
     StatisticsTable: '统计表',
     value: '数值',

@@ -266,12 +266,12 @@ export default {
         this.options.type = '2,3'
         this.activeName = 'second'
       }
-      if (type === 4 || type === 5) {
-        this.options.type = '4,5'
+      if (type === 4 || type === 5 || type === 18) {
+        this.options.type = '4,5,18'
         this.activeName = 'third'
       }
-      if (type === 6 || type === 7 || type === 10 || type === 13) {
-        this.options.type = '6,7,10,13'
+      if (type === 6 || type === 7 || type === 10 || type === 13 || type === 17) {
+        this.options.type = '6,7,10,13,17'
         this.activeName = 'fourth'
       }
       if (type === 8) {

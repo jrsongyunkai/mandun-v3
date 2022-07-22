@@ -805,21 +805,27 @@ export default {
         queryChannelDetailsByBoxAndAddr(params)
           .then(res => {
             if (res.success) {
+              //  console.log(res, '====res')
+              if (res.data.length <= 0) {
+                return false
+              }
               if (res.data[0].lineType && res.data[0].lineType === 'IO') {
-                this.AnalogList = res.data[0].analogIns
-                this.pushList = res.data[0].digitalIns
-                this.outputList = res.data[0].digitalOuts
+                // console.log(res)
+                // console.log(11111111111)
+                this.AnalogList = res.data[0].analogIns && res.data[0].analogIns.length > 0 ? res.data[0].analogIns : []
+                this.pushList = res.data[0].digitalIns && res.data[0].digitalIns.length > 0 ? res.data[0].digitalIns : []
+                this.outputList = res.data[0].digitalOuts && res.data[0].digitalOuts.length > 0 ? res.data[0].digitalOuts : []
                 this.configuruation = false
                 store.commit('lineType', 'IO')
                 let lineType = 'IO'
-                console.log(this.$store.state.lineType, '====this.$store.state.lineType')
+                //  console.log(this.$store.state.lineType, '====this.$store.state.lineType')
                 // console.log(this.AnalogList)
                 this.$emit(
                   'updateData',
-                  this.AnalogList[0].name,
-                  this.AnalogList[1].name,
-                  this.AnalogList[2].name,
-                  this.AnalogList[3].name,
+                  this.AnalogList.length > 0 ? this.AnalogList[0].name : '',
+                  this.AnalogList.length > 0 ? this.AnalogList[1].name : '',
+                  this.AnalogList.length > 0 ? this.AnalogList[2].name : '',
+                  this.AnalogList.length > 0 ? this.AnalogList[3].name : '',
                   lineType
                 )
               } else {

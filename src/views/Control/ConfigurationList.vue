@@ -756,7 +756,7 @@ import store from '@/store'
 import LoraDeviceSettings from './LoraDeviceSettings'
 import Enable from './Enable'
 import CommandFeedback from '../Common/CommandFeedback'
-import { queryChnlAttr, updateChnlAttr, updateNodeTitle, macAlias, modifyBoxsChnlWiring, saveBoxProperty, modifyBoxRemoteControl, terriblePower } from '@/api/api'
+import { queryChnlAttr, updateChnlAttr, updateNodeTitle, macAlias, modifyBoxsChnlWiring, saveBoxProperty, modifyBoxRemoteControl, terriblePower, queryBoxDetails } from '@/api/api'
 export default {
   props: {
     param: {
@@ -768,16 +768,16 @@ export default {
       adjustments: [],
       adjustment: {
         mac: this.$store.state.mac,
-        name: this.$store.state.aliasName,
-        build: this.$store.state.sortBUR.build,
-        unit: this.$store.state.sortBUR.unit,
-        room: this.$store.state.sortBUR.room,
-        linkman: this.$store.state.sortBUR.linkman,
-        linkman2: this.$store.state.sortBUR.linkman2,
-        linkmanTel: this.$store.state.sortBUR.linkmanTel,
-        linkmanTel2: this.$store.state.sortBUR.linkmanTel2,
-        customAlarm: this.$store.state.customAlarm,
-        classifyLabel: this.$store.state.classifyLabel
+        name: '', //  this.$store.state.aliasName,
+        build: '', //  this.$store.state.sortBUR.build,
+        unit: '', //  this.$store.state.sortBUR.unit,
+        room: '', //  this.$store.state.sortBUR.room,
+        linkman: '', //  this.$store.state.sortBUR.linkman,
+        linkman2: '', //  this.$store.state.sortBUR.linkman2,
+        linkmanTel: '', //  this.$store.state.sortBUR.linkmanTel,
+        linkmanTel2: '', //  this.$store.state.sortBUR.linkmanTel2,
+        customAlarm: '', //  this.$store.state.customAlarm,
+        classifyLabel: ''//  this.$store.state.classifyLabel
       },
       wiringForm: {
         wiring: ''
@@ -834,7 +834,11 @@ export default {
       total: 0
     }
   },
+  created () {
+    this.queryInfo()
+  },
   mounted () {
+    // console.log(this.$store.state.mac, '============this.$store.state.mac')
     if (this.param.equipmentType !== 8) this.init()
     this.linkmanIndex = (this.$store.state.sortBUR.linkman === '' || this.$store.state.sortBUR.linkman === undefined) ? (this.$store.state.sortBUR.linkman === undefined ? undefined : '') : -1
     this.linkman2Index = (this.$store.state.sortBUR.linkman2 === '' || this.$store.state.sortBUR.linkman2 === undefined) ? (this.$store.state.sortBUR.linkman2 === undefined ? undefined : '') : -1
@@ -844,6 +848,29 @@ export default {
   methods: {
     init () {
       this.handleAdjustment(this.adjustment.mac, this.adjustment.name)
+    },
+    queryInfo () {
+      let params = {
+        'mac': this.$store.state.mac
+      }
+      queryBoxDetails(params).then(res => {
+        if (res.success) {
+          this.adjustment.name = res.data.name
+          this.adjustment.build = res.data.build
+          this.adjustment.unit = res.data.unit
+          this.adjustment.room = res.data.room
+          this.adjustment.linkman = res.data.linkman
+          this.adjustment.linkman2 = res.data.linkman2
+          this.adjustment.linkmanTel = res.data.linkmanTel
+          this.adjustment.linkmanTel2 = res.data.linkmanTel2
+          this.adjustment.customAlarm = res.data.others.customAlarm
+          this.adjustment.classifyLabel = res.data.others.classifyLabel
+          store.commit('aliasName', res.data.name)
+          store.commit('customAlarm', res.data.others.customAlarm)
+          store.commit('classifyLabel', res.data.others.classifyLabel)
+          store.commit('sortBUR', {build: res.data.build, unit: res.data.unit, room: res.data.room, linkman: res.data.linkman, linkman2: res.data.linkman2, linkmanTel: res.data.linkmanTel, linkmanTel2: res.data.linkmanTel2})
+        }
+      })
     },
     handleAdjustment (mac, name) {
       let ele = document.querySelector('.alarm-threshold-refresh')

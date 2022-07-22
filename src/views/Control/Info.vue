@@ -256,10 +256,10 @@ export default {
             this.linkmanTel2 = res.data.linkmanTel2
             this.imgData.mac = res.data.mac
             this.aliasName = res.data.name
-            store.commit('aliasName', res.data.name)
-            store.commit('customAlarm', res.data.others.customAlarm)
-            store.commit('classifyLabel', res.data.others.classifyLabel)
-            store.commit('sortBUR', {build: res.data.build, unit: res.data.unit, room: res.data.room, linkman: res.data.linkman, linkman2: res.data.linkman2, linkmanTel: res.data.linkmanTel, linkmanTel2: res.data.linkmanTel2})
+            // store.commit('aliasName', res.data.name)
+            // store.commit('customAlarm', res.data.others.customAlarm)
+            // store.commit('classifyLabel', res.data.others.classifyLabel)
+            // store.commit('sortBUR', {build: res.data.build, unit: res.data.unit, room: res.data.room, linkman: res.data.linkman, linkman2: res.data.linkman2, linkmanTel: res.data.linkmanTel, linkmanTel2: res.data.linkmanTel2})
             this.others = {
               imsi: res.data.others.imsi,
               iccid: res.data.others.iccid,

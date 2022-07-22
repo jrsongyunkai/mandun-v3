@@ -14,7 +14,7 @@
             v-el_scrollBar:scrollBar>
             <el-table-column :label="$t('table.sceneName')"  width="200" align="center">
               <template slot-scope="scope">
-                <span class="pointer c-default"  @click="handleViewScene(scope.row.sceneId)">{{scope.row.sceneName}}</span>
+                <span class="pointer c-default"  @click="handleViewScene(scope.row.sceneId,scope.row)">{{scope.row.sceneName}}</span>
               </template>
             </el-table-column>
             <el-table-column label="场景模式">
@@ -48,16 +48,6 @@
                   <el-button  v-if="scope.row.type===1" class="top-padding-bottom left-padding-right c-default" type="text" @click="handleSceneSync(scope.row)">{{ $t('table.push') }}</el-button>
                 </el-tooltip>
                 <el-button   class="top-padding-bottom left-padding-right c-default" type="text" @click="handleInstructions(scope.row)">{{ $t('table.instruction') + $t('table.history') }}</el-button>
-               <!-- <el-dropdown  v-if="scope.row.type===2"  trigger="click"  @command="handleCommand">
-              <el-button type="text">
-                  更多<i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-              <el-dropdown-menu slot="dropdown" >
-                <el-dropdown-item  :command="{sceneId:scope.row.sceneId, command:'execute'}">{{ $t('btns.execute') }}</el-dropdown-item>
-                <el-dropdown-item  :command="{sceneId:scope.row.sceneId, command:'delete'}">{{ $t('system.delete') }}</el-dropdown-item>
-                <el-dropdown-item  :command="{row:scope.row, command:'history'}">{{ $t('table.instruction') + $t('table.history') }}</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown> -->
               </template>
             </el-table-column>
           </el-table>
@@ -1007,7 +997,8 @@ export default {
         this.sceneTimer.week = []
       }
     },
-    handleViewScene (ele) {
+    handleViewScene (ele, row) {
+      this.senceType = row.type
       let params = {
         projectCode: this.$store.state.projectCode,
         sceneId: ele

@@ -387,7 +387,7 @@
                             />
                           </span>
                           <span  v-show="v.equipmentType === 18"> <img
-                              src="/static/images/watjin.png"
+                              src="/static/images/renkeShuijin.png"
                               alt="Mantunsci"
                             /></span>
                              <span  v-show="v.equipmentType === 17"> <img

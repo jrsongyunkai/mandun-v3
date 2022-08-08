@@ -42,6 +42,19 @@ export default {
           this.isRouter = true
         })
       })
+  },
+  provide () {
+    return {
+      getReload: this.getReload
+    }
+  },
+  methods: {
+    getReload () {
+      this.isRouter = false
+      this.$nextTick(function () {
+        this.isRouter = true
+      })
+    }
   }
 }
 </script>

@@ -1,5 +1,16 @@
 export const versionHistory = {
   'current': {
+    'deploy_time': '2022-08-05',
+    'version_no': 'v6.2.0',
+    'content': [
+      '1.增加面板类(H5系列)设备',
+      '2.实现了几个开放接口',
+      '3.调整APP录入设备的审批机制',
+      '4.优化了一些功能逻辑',
+      '5.修复了一些BUG'
+    ]
+  },
+  'hislist': [{
     'deploy_time': '2022-07-11',
     'version_no': 'v6.1.0',
     'content': [
@@ -9,14 +20,14 @@ export const versionHistory = {
       '4.修复了一些BUG'
     ]
   },
-  'hislist': [{
+  {
     'deploy_time': '2022-06-09',
     'version_no': 'v6.0.4',
     'content': [
       '1.更换了默认登录页面',
       '2.修复了一些BUG'
     ]
-  },{
+  }, {
     'deploy_time': '2022-06-01',
     'version_no': 'v6.0.3-sp3',
     'content': [

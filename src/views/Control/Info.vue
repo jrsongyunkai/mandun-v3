@@ -169,24 +169,215 @@
           </el-col>
       </el-col>
       <el-col class="position mt-7" v-if="others.address" :span="24">
-        <p class="ellipsis" :title="others.address">{{ $t('table.position')  + '：' + others.address }}</p>
+        <p class="ellipsis" :title="customDeviceAdress">{{ $t('table.position')  + '：' +customDeviceAdress}} <i class="el-icon-edit-outline" @click="openDeviceDialog"></i></p>
+
       </el-col>
     </el-row>
+    <el-dialog  :visible.sync="dialogVisible"
+      :modal="false"
+      width="80vw"
+        @closed="handleCloseMap"
+      id="map-wraps"><div slot="title" >
+         <span v-if="!searchFlag">{{
+          $t('statistics.deviceAddress') + '：' + customDeviceAdress
+        }}</span>
+        <span v-if="searchFlag" id="suggest-wrap">
+          <el-form ref="form" size="small" :model="form" :rules="rules" label-width="5px">
+            <el-row>
+              <el-col :span="$i18n.locale === 'zh' ? 2 : 3">
+                <el-form-item>
+                  {{ $t('statistics.deviceAddress') + '：' }}
+                </el-form-item>
+              </el-col>
+              <el-col :span="3">
+                <el-form-item>
+                  <el-input
+                    v-model="form.province"
+                    :placeholder="$t('placeholder.province')"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="3">
+                <el-form-item>
+                  <el-input
+                    v-model="form.city"
+                    :placeholder="$t('placeholder.city')"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="3">
+                <el-form-item>
+                  <el-input
+                    v-model="form.district"
+                    :placeholder="$t('placeholder.district')"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+               <el-col :span="5">
+                <el-form-item>
+                  <el-input
+                    v-model="form.street"
+                    :placeholder="$t('placeholder.street')"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" :offset="1" v-if="cfg.useMap !== 'CUSTOM_MAP'">
+                <el-form-item>
+                  <el-input
+                    @input="
+                      val => {
+                        form.longitude = val
+                          .replace(/[^0-9.]/g, '')
+                          .replace('.', '#*')
+                          .replace(/\./g, '')
+                          .replace('#*', '.')
+                      }
+                    "
+                    v-model.number="form.longitude"
+                    :placeholder="$t('placeholder.longitude')"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" v-if="cfg.useMap !== 'CUSTOM_MAP'">
+                <el-form-item>
+                  <el-input
+                    @input="
+                      val => {
+                        form.latitude = val
+                          .replace(/[^0-9.]/g, '')
+                          .replace('.', '#*')
+                          .replace(/\./g, '')
+                          .replace('#*', '.')
+                      }
+                    "
+                    v-model.number="form.latitude"
+                    :placeholder="$t('placeholder.latitude')"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24" style="margin:20px 0">
+               <el-col :span="2" style="margin-left:125px">
+                <el-form-item prop="build">
+                  <el-input  v-model="form.build" maxlength="50"
+                    :placeholder="$t('control.building')"></el-input>
+                </el-form-item>
+               </el-col>
+               <el-col :span="2">
+                <el-form-item prop="unit">
+                  <el-input  v-model="form.unit"  maxlength="50"
+                    :placeholder="$t('control.unit')"></el-input>
+                </el-form-item>
+               </el-col>
+                <el-col :span="2" >
+                <el-form-item prop="room" >
+                  <el-input  v-model="form.room"  maxlength="50"
+                    :placeholder="$t('control.room')"></el-input>
+                </el-form-item>
+               </el-col>
+                 <el-col :span="2">
+                <el-form-item>
+                  <el-button
+                    :disabled="form.longitude === '' || form.latitude === ''"
+                    @click="saveDeviceAdress"
+                    type="primary"
+                    >{{ $t('btns.save') }}</el-button
+                  >
+                </el-form-item>
+               </el-col>
+              </el-col>
+              <el-col class="auto-address" v-if="cfg.useMap === 'BAIDU'" style="margin-top:10px">
+                <el-col :span="$i18n.locale === 'zh' ? 2 : 3" class="fs-14">{{
+                  $t('statistics.map') +
+                    ($i18n.locale === 'zh' ? '' : '\xa0') +
+                    $t('btns.query') +
+                    '：'
+                }}</el-col>
+                <el-autocomplete
+                  v-model="form.address"
+                  size="small"
+                  style="margin-left:5px"
+                  popper-class="autoAddressClass"
+                  :fetch-suggestions="querySearchAsync"
+                  :trigger-on-focus="false"
+                  :placeholder="$t('placeholder.content')"
+                  @select="handleSelect"
+                >
+                  <template slot-scope="{ item }">
+                    <div class="name">
+                      <i class="el-icon-search" />{{ item.title }}
+                    </div>
+                    <span class="addr ellipsis">{{ item.address }}</span>
+                  </template>
+                </el-autocomplete>
+                <el-button size="small" @click="handleReLocate(rePoint)">{{
+                  $t('btns.query')
+                }}</el-button>
+              </el-col>
+            </el-row>
+          </el-form>
+        </span>
+         <i
+          v-if="!searchFlag"
+          class="el-icon-edit pointer"
+          @click="handleMapEdit"
+        ></i>
+        </div>
+         <div id="map" v-if="cfg.useMap !== 'CUSTOM_MAP'"></div>
+      <Custom
+        v-if="cfg.useMap === 'CUSTOM_MAP' && customFlag"
+        source="inner"
+        :datas="customDatas"
+      ></Custom>
+        </el-dialog>
   </div>
 </template>
 <script>
 /* global ctxPaths */
 /* global config */
+/* global BMap */
+/* global google */
+import { Map } from '../../map'
+import mapStyleJson from '../../assets/js/custom_map_config.json'
+import myIcon1 from '../../assets/image/nIcon.png'
+import Custom from '../Common/Custom.vue'
 import store from '@/store'
-import { queryBoxDetails, checkMacOnlineStatus, macAlias, refreshSim } from '@/api/api'
+import { queryBoxDetails, checkMacOnlineStatus, macAlias, refreshSim, findBoxByMac, queryHomeMapInfo, getGblinfo } from '@/api/api'
 export default {
   props: {
     mac: {
       type: String
     }
   },
+  components: {
+    Custom
+  },
   data () {
     return {
+      customDeviceAdress: '',
+      customFlag: false,
+      customDatas: [],
+      rePoint: { lng: 0, lat: 0 },
+      obj: null,
+      rules: {
+        build: [ { required: true, message: '请输入楼栋', trigger: 'blur' } ],
+        room: [ { required: true, message: '请输入楼栋', trigger: 'blur' } ],
+        unit: [ { required: true, message: '请输入楼栋', trigger: 'blur' } ]
+      },
+      cfg: config,
+      form: {
+        address: '',
+        province: '',
+        city: '',
+        district: '',
+        street: '',
+        build: '',
+        unit: '',
+        room: '',
+        longitude: '',
+        latitude: ''
+      },
+      searchFlag: false,
+      dialogVisible: false,
       info: [],
       others: {
         imsi: '',
@@ -241,6 +432,8 @@ export default {
     init () {
       this.queryInfo()
       this.queryStatus()
+      this.getGblinfos()
+      this.getDeviceAdress()
     },
     queryInfo () {
       let params = {
@@ -269,7 +462,7 @@ export default {
               version: res.data.others.version,
               online: res.data.others.online
             }
-            if (this.info.equipmentType === 1) {
+            if (this.info.equipmentType === 1 || this.info.equipmentType === 19) {
               if (this.others.online === 1) {
                 this.url = this.info.imgUrl ? this.info.imgUrl : '/static/images/Airopen-online.png'
                 this.srcList = [this.info.imgUrl ? this.info.imgUrl : '/static/images/Airopen-online.png']
@@ -293,7 +486,7 @@ export default {
                 this.url = this.info.imgUrl ? this.info.imgUrl : '/static/images/Stralsund-offline.png'
                 this.srcList = [this.info.imgUrl ? this.info.imgUrl : '/static/images/Stralsund-offline.png']
               }
-            } else if (this.info.equipmentType === 4 || this.info.equipmentType === 5) {
+            } else if (this.info.equipmentType === 4 || this.info.equipmentType === 5 || this.info.equipmentType === 18) {
               if (this.others.online === 1) {
                 this.url = this.info.imgUrl ? this.info.imgUrl : '/static/images/PressureLevel-online.png'
                 this.srcList = [this.info.imgUrl ? this.info.imgUrl : '/static/images/PressureLevel-online.png']
@@ -424,6 +617,109 @@ export default {
             })
           }
         })
+    },
+    handleSelect (item) {
+      this.form.address = item.address + item.title
+      this.rePoint = item.point
+      this.obj = item
+    },
+    handleCloseMap () {
+      this.searchFlag = false
+      this.customFlag = false
+      // this.form.address = this.address
+      this.getGblinfos()
+    },
+    getGblinfos () {
+      let params = {
+        rf: 'json'
+      }
+      this.$nextTick(function () {
+        getGblinfo(params)
+          .then(res => {
+            this.address = res.DEF_PRJ_LOCATION.address
+            this.industryName = res.DEF_PRJ_LOCATION.industryName
+            this.prjManager = res.DEF_PRJ_LOCATION.prjManager
+            this.prjTel = res.DEF_PRJ_LOCATION.prjTel
+            // this.longitude = res.DEF_PRJ_LOCATION.longitude
+            // this.latitude = res.DEF_PRJ_LOCATION.latitude
+            this.linkman2 = res.DEF_PRJ_LOCATION.linkMan2
+            this.prjTel2 = res.DEF_PRJ_LOCATION.linkTel2
+            this.linkman3 = res.DEF_PRJ_LOCATION.linkMan3
+            this.prjTel3 = res.DEF_PRJ_LOCATION.linkTel3
+            this.prjId = res.DEF_PRJ_LOCATION.prjId
+            this.contact = res.DEF_PRJ_LOCATION.prjManager
+            this.contactNumber = res.DEF_PRJ_LOCATION.prjTel
+            this.contact2 = res.DEF_PRJ_LOCATION.linkMan2
+            this.contactNumber2 = res.DEF_PRJ_LOCATION.linkTel2
+            this.contact3 = res.DEF_PRJ_LOCATION.linkMan3
+            this.contactNumber3 = res.DEF_PRJ_LOCATION.linkTel3
+            // this.form.province = res.DEF_PRJ_LOCATION.provinceName
+            // this.form.city = res.DEF_PRJ_LOCATION.cityName
+            // this.form.district = res.DEF_PRJ_LOCATION.countyName
+            // this.form.street = res.DEF_PRJ_LOCATION.street
+            // this.form.longitude = res.DEF_PRJ_LOCATION.longitude
+            // this.form.latitude = res.DEF_PRJ_LOCATION.latitude
+            this.cfg = res
+            store.commit('projectName', res.DEF_PRJ_TITLE)
+          })
+          .catch(err => {
+            if (err) {
+              this.$message({
+                message: this.$t('message.unknown'),
+                type: 'error'
+              })
+            }
+          })
+      })
+    },
+    getDeviceAdress () {
+      let parmas = {
+        mac: this.mac
+      }
+      findBoxByMac(parmas).then(res => {
+        if (res.success) {
+          // console.log(res, '======info设备地址')
+
+          this.form.build = res.data.build
+          this.form.room = res.data.room
+          this.form.unit = res.data.unit
+          this.form.province = res.data.provinceName
+          this.form.city = res.data.cityName
+          this.form.district = res.data.countyName
+          this.form.street = res.data.street
+          this.form.longitude = res.data.longitude
+          this.form.latitude = res.data.latitude
+          this.longitude = res.data.longitude
+          this.latitude = res.data.latitude
+          this.form.address = res.data.provinceName + res.data.cityName + res.data.countyName + res.data.street + res.data.build + res.data.unit + res.data.room
+          this.customDeviceAdress = res.data.provinceName + res.data.cityName + res.data.countyName + res.data.street + res.data.build + res.data.unit + res.data.room
+        } else if (res.code === '-1') {
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    handleReLocate (point) {
+      if (JSON.stringify(point) !== '{"lng":0,"lat":0}') {
+        this.geoc.getLocation(point, rs => {
+          if (rs) {
+            let ac = rs.addressComponents
+            this.form.province = ac.province
+            this.form.city = ac.city
+            this.form.district = ac.district
+            this.form.street =
+              ac.street + (this.obj !== null ? this.obj.title : '')
+            this.form.longitude = point.lng
+            this.form.latitude = point.lat
+          }
+        })
+        this.bmap.clearOverlays()
+        this.bmap.addOverlay(new BMap.Marker(point))
+        this.bmap.panTo(point)
+      }
     },
     setTimer (fn, delay) {
       let _this = this
@@ -570,6 +866,202 @@ export default {
           type: 'error'
         })
       }
+    },
+    openDeviceDialog () {
+      this.dialogVisible = true
+      this.$nextTick(() => {
+        this.renderMap()
+      })
+    },
+
+    handleMapEdit () {
+      this.searchFlag = true
+      // this.form.address = this.others.address
+    },
+    saveDeviceAdress () {
+      let params = {
+        mac: this.mac,
+        longitude: this.form.longitude ? this.form.longitude : '',
+        latitude: this.form.latitude ? this.form.latitude : '',
+        provinceName: this.form.province ? this.form.province : '',
+        cityName: this.form.city ? this.form.city : '',
+        countyName: this.form.district ? this.form.district : '',
+        street: this.form.street ? this.form.street : '',
+        build: this.form.build,
+        unit: this.form.unit,
+        room: this.form.room
+      }
+      if (!this.form.build || !this.form.unit || !this.form.room) {
+        this.$message({
+          message: '请输入必填项楼栋单元房号',
+          type: 'error'
+        })
+        return false
+      }
+      macAlias(params).then(res => {
+        if (res.success) {
+          this.$message({
+            message: res.message,
+            type: 'success'
+          })
+          this.searchFlag = false
+          this.init()
+        } else if (res.code === '-1') {
+        } else {
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    querySearchAsync (str, cb) {
+      var options = {
+        onSearchComplete: function (res) {
+          let s = []
+          cb(s)
+          if (local.getStatus() === 0) {
+            for (let i = 0; i < res.getCurrentNumPois(); i++) {
+              s.push(res.getPoi(i))
+            }
+            cb(s)
+          } else {
+            s = res.suggestions
+            cb(s)
+          }
+        }
+      }
+      var local = new BMap.LocalSearch(this.bmap, options)
+      local.search(str)
+    },
+    async renderMap () {
+      if (config.useMap === 'BAIDU') {
+        if (typeof BMap === 'undefined') {
+          await Map(config.baiduKey, config.useMap)
+        }
+        let bmap = new BMap.Map('map')
+        let geoc = new BMap.Geocoder()
+        let point = new BMap.Point(this.longitude, this.latitude)
+        let marker = new BMap.Marker(point, { enalbeDragging: true })
+        bmap.centerAndZoom(point, 16)
+        if (!config.mapStyle || config.mapStyle !== 'normal') {
+          bmap.setMapStyleV2({ styleJson: mapStyleJson })
+        }
+        bmap.enableScrollWheelZoom(true)
+        bmap.addOverlay(marker)
+        bmap.addEventListener('click', e => {
+          if (this.searchFlag) {
+            this.obj = null
+            this.handleReLocate(e.point)
+            geoc.getLocation(e.point, res => {
+              this.form.address = res.address
+              this.rePoint = res.point
+            })
+          }
+        })
+        this.bmap = bmap
+        this.geoc = geoc
+      } else if (config.useMap === 'BAIDU_OFFLINE') {
+        let bmap = new BMap.Map('map')
+        this.bamp = bmap
+        let point = new BMap.Point(this.longitude, this.latitude)
+        let marker = new BMap.Marker(point, { enalbeDragging: true })
+        bmap.centerAndZoom(point, this.baiduOfflinemapMaxzoom)
+        bmap.setMaxZoom(this.baiduOfflinemapMaxzoom)
+        bmap.enableScrollWheelZoom(true)
+        bmap.addOverlay(marker)
+        bmap.addEventListener('click', e => {
+          if (this.searchFlag) {
+            this.obj = null
+            bmap.clearOverlays()
+            bmap.addOverlay(new BMap.Marker(e.point))
+            bmap.panTo(e.point)
+            this.form.province = ''
+            this.form.city = ''
+            this.form.district = ''
+            this.form.street = ''
+            this.form.longitude = e.point.lng
+            this.form.latitude = e.point.lat
+          }
+        })
+      } else if (config.useMap === 'GOOGLE') {
+        if (typeof google === 'undefined') {
+          await Map(config.googleKey, config.useMap)
+        }
+        let myLatLng = this.$func.BD09_To_GCJ02(this.latitude, this.longitude)
+        let map = new google.maps.Map(document.getElementById('map'), {
+          center: myLatLng,
+          mapTypeControl: false,
+          streetViewControl: false,
+          zoom: 15
+        })
+        let icon = {
+          url: myIcon1,
+          size: new google.maps.Size(21, 34),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(21, 34),
+          scaledSize: new google.maps.Size(21, 34)
+        }
+        let marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+          icon: icon
+        })
+        marker.setMap(map)
+        google.maps.event.addListener(map, 'click', event => {
+          if (this.searchFlag) {
+            let latLng = this.$func.GCJ02_To_BD09(
+              event.latLng.lat(),
+              event.latLng.lng()
+            )
+            marker.setMap(null)
+            marker = new google.maps.Marker({
+              position: event.latLng,
+              map: map,
+              icon: icon
+            })
+            marker.setMap(map)
+            this.form.province = ''
+            this.form.city = ''
+            this.form.district = ''
+            this.form.street = ''
+            this.form.longitude = latLng.lng
+            this.form.latitude = latLng.lat
+          }
+        })
+      } else if (config.useMap === 'CUSTOM_MAP') {
+        queryHomeMapInfo({ projectCode: this.$store.state.projectCode })
+          .then(res => {
+            if (res.success) {
+              this.customFlag = true
+              this.customDatas = res
+              // console.log(res, '===zheshismditu')
+            } else if (res.code === '-1') {
+            } else {
+              if (res.message) {
+                this.$message({
+                  message: res.message,
+                  type: 'error'
+                })
+              } else {
+                this.$message({
+                  message: this.$t('message.unknown'),
+                  type: 'error'
+                })
+              }
+              this.customFlag = false
+            }
+          })
+          .catch(err => {
+            if (err) {
+              this.$message({
+                message: this.$t('message.unknown'),
+                type: 'error'
+              })
+            }
+            this.customFlag = false
+          })
+      }
     }
   },
   destroyed () {
@@ -593,6 +1085,15 @@ export default {
     margin 0
 .upload-wrapper
   position relative
+#map
+    width 100%
+    height 500px
+#map-wraps >>> .el-dialog
+    background #474d59
+#map-wraps >>> .el-dialog__headerbtn .el-dialog__close, #map-wraps >>> .el-dialog__title
+    color #fffeff
+#map-wraps >>> .el-form-item--small.el-form-item
+  margin-bottom 0
 .upload
   width 140px
   left 1px
@@ -637,4 +1138,34 @@ export default {
 .default
   &:hover
     color #409EFF
+.auto-address
+  position absolute
+  top 93px
+  left -10px
+  width calc(80vw - 20px)
+  padding 5px 5px 5px 15px
+  z-index 9999
+  background rgba(0, 0, 0, .3)
+  .fs-14
+    line-height 32px
+  >>> .el-autocomplete
+        width 30vw
+.autoAddressClass
+  li
+    padding 0 10px
+    line-height normal
+    padding 7px
+    .name
+      line-height 24px
+      text-overflow ellipsis
+      overflow hidden
+      .el-icon-search
+        margin-right 5px
+    .addr
+      margin-left 19px
+      font-size 12px
+      color #b4b4b4
+      line-height 24px
+    .highlighted .addr
+      color #ddd
 </style>

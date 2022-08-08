@@ -16,6 +16,17 @@
             v-if="activeName === 'second'"
           ></List>
         </el-tab-pane>
+         <el-tab-pane
+         :label="$t('control.protectionPanel')"
+
+          name= "nineth"
+         >
+          <List
+            :options="options"
+            @sendMac="receiveMac"
+            v-if="activeName === 'nineth'"
+          ></List>
+         </el-tab-pane>
         <el-tab-pane
           :label="$t('control.hydrologicalMonitoring')"
           v-if="activeFlag3"
@@ -172,7 +183,7 @@ export default {
         })
         return false
       }
-      let newCheckList = Array.from(new Set([1, 2].concat(this.checkedCities)))
+      let newCheckList = Array.from(new Set([1, 2, 9].concat(this.checkedCities)))
       // console.log(newCheckList, '======newCheckList')
       let params = {
         projectCode: this.$store.state.projectCode,
@@ -290,6 +301,10 @@ export default {
         this.options.type = '15,16'
         this.activeName = 'eighth'
       }
+      if (type === 19) {
+        this.options.type = '19'
+        this.activeName = 'nineth'
+      }
       this.options.mac = this.$store.state.overview.mac
     },
     handleClick (tab, event) {
@@ -303,6 +318,7 @@ export default {
       if (name === 'six') this.options.type = '11,14'
       if (name === 'seventh') this.options.type = '12'
       if (name === 'eighth') this.options.type = '15,16'
+      if (name === 'nineth') this.options.type = '19'
     },
     receiveMac (val) {
       this.options.mac = val

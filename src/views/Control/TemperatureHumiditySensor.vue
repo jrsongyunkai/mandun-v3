@@ -102,11 +102,13 @@ export default {
       getEffectAddr(params)
         .then(res => {
           if (res.success) {
-            this.formInline.line = res.datas[0].nodeName
-            this.options = res.datas
-            let val = res.datas[0].nodeId
-            store.commit('nodeId', res.datas[0].nodeId)
-            this.handleNodeName(val)
+            if (res.datas[0] && res.datas.length > 0) {
+              this.formInline.line = res.datas[0].nodeName
+              this.options = res.datas
+              let val = res.datas[0].nodeId
+              store.commit('nodeId', res.datas[0].nodeId)
+              this.handleNodeName(val)
+            }
           } else if (res.code === '-1') {
           } else {
             this.$message({

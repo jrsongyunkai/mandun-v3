@@ -708,6 +708,7 @@ export default {
     }
   },
   created () {},
+  inject: ['getReload'],
   mounted () {
     this.init()
     this.setTimer(this.forTip, config.pollingInterval.forTip * 1000)
@@ -1160,6 +1161,10 @@ export default {
                   type: 'error'
                 })
               }
+            })
+            .finally(() => {
+              this.getReload()
+              // console.log('这里清理了缓存')
             })
         })
         .catch(() => {

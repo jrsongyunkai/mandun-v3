@@ -276,7 +276,7 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item icon="el-icon-map-location" command="map">{{
-                  $t('statistics.map')
+                  '项目位置修改'
                 }}</el-dropdown-item>
                 <el-dropdown-item
                   v-if="

@@ -130,7 +130,7 @@
                       >
                         <span
                           v-show="
-                            v.equipmentType === 1 || v.equipmentType === 2
+                            v.equipmentType === 1 || v.equipmentType === 2|| v.equipmentType === 19
                           "
                           >{{ $t('control.lineNos') + '：'
                           }}{{
@@ -145,7 +145,7 @@
                           <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item
                               v-if="
-                                v.equipmentType === 1 || v.equipmentType === 2
+                                v.equipmentType === 1 || v.equipmentType === 2|| v.equipmentType === 19
                               "
                               :command="beforeHandleCommand('list', v)"
                               >{{
@@ -158,7 +158,7 @@
                                   .AUTH_PROJECT_USE__SET_SERVER_POINT ===
                                   'true' &&
                                   (v.equipmentType === 1 ||
-                                    v.equipmentType === 2)
+                                    v.equipmentType === 2|| v.equipmentType === 19)
                               "
                               :command="beforeHandleCommand('orientation', v)"
                               >{{
@@ -175,7 +175,7 @@
                             >
                             <el-dropdown-item
                               v-if="
-                                v.equipmentType === 1 || v.equipmentType === 2
+                                v.equipmentType === 1 || v.equipmentType === 2|| v.equipmentType === 19
                               "
                               :command="beforeHandleCommand('equipment', v)"
                               >{{
@@ -184,7 +184,7 @@
                             >
                             <el-dropdown-item
                               v-if="
-                                v.equipmentType === 1 || v.equipmentType === 2
+                                v.equipmentType === 1 || v.equipmentType === 2|| v.equipmentType === 19
                               "
                               :command="beforeHandleCommand('builtIn', v)"
                               >{{
@@ -196,7 +196,7 @@
                             <el-dropdown-item
                               v-if="
                                 (v.equipmentType === 1 ||
-                                  v.equipmentType === 2) &&
+                                  v.equipmentType === 2|| v.equipmentType === 19) &&
                                   v.others.enableAdvancedTiming
                               "
                               :command="beforeHandleCommand('longitude', v)"
@@ -209,7 +209,7 @@
                             <el-dropdown-item
                               v-if="
                                 (v.equipmentType === 1 ||
-                                  v.equipmentType === 2) &&
+                                  v.equipmentType === 2|| v.equipmentType === 19) &&
                                   bandFlag
                               "
                               :command="beforeHandleCommand('region', v)"
@@ -388,6 +388,10 @@
                           </span>
                           <span  v-show="v.equipmentType === 18"> <img
                               src="/static/images/renkeShuijin.png"
+                              alt="Mantunsci"
+                            /></span>
+                             <span  v-show="v.equipmentType === 19"> <img
+                              src="/static/images/zhinengmianban.png"
                               alt="Mantunsci"
                             /></span>
                              <span  v-show="v.equipmentType === 17"> <img
@@ -995,7 +999,7 @@
           <ConfigurationList
             v-if="
               equipmentFlag &&
-                (equipmentNum === 1 || equipmentNum === 2 || equipmentNum === 8)
+                (equipmentNum === 1 || equipmentNum === 2 || equipmentNum === 8 || equipmentNum === 19)
             "
             :param="obj"
           ></ConfigurationList>
@@ -1686,7 +1690,7 @@ export default {
     },
     handleDblLineList (obj) {
       localStorage.setItem('dblLineObj', obj.mac)
-      if (obj.equipmentType !== 1 && obj.equipmentType !== 2) return false
+      if (obj.equipmentType !== 1 && obj.equipmentType !== 2 && obj.equipmentType !== 19) return false
       if (obj) this.obj = obj
       this.detailsFlag = false
       this.flag = false

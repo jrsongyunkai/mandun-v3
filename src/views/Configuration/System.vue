@@ -31,10 +31,10 @@
             <AlarmSound v-if="systemActive === 'third'"></AlarmSound>
           </el-tab-pane>
           <el-tab-pane :label="$t('system.SMSNotice')" name="fourth">
-            <Notification :category="3" v-if="systemActive === 'fourth'"></Notification>
+            <Notification :resKeys="resKeys" :category="3" v-if="systemActive === 'fourth'"></Notification>
           </el-tab-pane>
           <el-tab-pane :label="$t('system.VoiceNotification')" name="fifth">
-            <Notification :category="6" v-if="systemActive === 'fifth'"></Notification>
+            <Notification :resKeys="resKeys" :category="6" v-if="systemActive === 'fifth'"></Notification>
           </el-tab-pane>
           <el-tab-pane :label="$t('system.AppNotice')" name="sixth">
             <Notification :category="1" v-if="systemActive === 'sixth'"></Notification>
@@ -67,6 +67,7 @@ export default {
       systemActive: 'first',
       defaultActive: 0,
       selected: this.$t('system.alarm'),
+      resKeys: false,
       menu: [
         {
           icon: 'el-icon-bell',
@@ -110,8 +111,18 @@ export default {
             })
           }
         })
+      this.handlePageAuth()
     },
-    handleClick (tab, event) {}
+    handleClick (tab, event) {},
+    handlePageAuth () {
+      let params = {
+        resKeys: 'AUTH_PROJECT_USE',
+        operKeys: 'RECHARGE_PROHIBITION'
+      }
+      queryPageAuth(params).then(res => {
+        this.resKeys = res.data[0].result
+      })
+    }
   },
   components: {
     Underlay,

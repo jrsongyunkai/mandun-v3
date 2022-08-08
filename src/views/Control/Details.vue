@@ -5,7 +5,7 @@
         <el-col class="info">
           <Info :mac="param.mac"></Info>
         </el-col>
-        <el-col class="mantunsci" v-if="param.equipmentType === 1&& ocDevice !== 'IO'">
+        <el-col class="mantunsci" v-if="(param.equipmentType === 1||param.equipmentType === 19)&& ocDevice !== 'IO'">
             <LineChart :options="residualCurrent" :onGetEchartsInstance="onGetEchartsInstance"></LineChart>
         </el-col>
         <el-col class="mantunsci" v-if="param.equipmentType === 1&& ocDevice === 'IO'">
@@ -16,7 +16,7 @@
             :onGetEchartsInstance="onGetEchartsInstance"
           ></TcequipmentLine>
         </el-col>
-        <el-col class="mantunsci" v-if="param.equipmentType === 1&& ocDevice !== 'IO'">
+        <el-col class="mantunsci" v-if="(param.equipmentType === 1||param.equipmentType === 19)&& ocDevice !== 'IO'">
             <LineChart :options="temperature" :onGetEchartsInstance="onGetEchartsInstance"></LineChart>
         </el-col>
         <el-col  class="mantunsci" v-if="param.equipmentType === 1&& ocDevice === 'IO'">
@@ -93,6 +93,16 @@
           <Greenbird  :param="param"></Greenbird>
         </el-col>
          <el-col class="stralsund" v-if="param.equipmentType === 18">
+         <div>
+           <el-select v-model="formInline.line"  @change="changeNodesChart" class="custom-input" style="margin-bottom: 2px;width: 100px;margin-left: 150px;" popper-class="auto-complete" size="mini" :placeholder="$t('placeholder.pleaseChoose')">
+            <el-option
+              v-for="item in optionNode"
+              :key="item.nodeId"
+              :label="item.nodeName"
+              :value="item.nodeId">
+            </el-option>
+          </el-select>
+         </div>
           <LineChart :options="watermoreChart"></LineChart>
         </el-col>
       </el-col>
@@ -119,7 +129,7 @@
           ></TcequipmentLine>
         </el-col>
       </el-col>
-       <el-col :span="24" v-if="param.equipmentType === 1 && ocDevice !== 'IO'">
+       <el-col :span="24" v-if="(param.equipmentType === 1||param.equipmentType === 19) && ocDevice !== 'IO'">
         <el-col class="info"
           ><LineConfiggur
             :param="param"
@@ -386,6 +396,10 @@ export default {
   },
   data () {
     return {
+      formInline: {
+        line: ''
+      },
+      optionNode: [],
       ocDevice: '',
       watermoreChart: {
         xAxis: [],
@@ -807,6 +821,7 @@ export default {
     init () {
       if (
         this.param.equipmentType === 1 ||
+         this.param.equipmentType === 19 ||
         this.param.equipmentType === 2 ||
         this.param.equipmentType === 8
       ) {
@@ -839,7 +854,7 @@ export default {
       this.$refs.MaintenanceRecords.init()
     },
     onGetEchartsInstance (echart) {
-      if (this.param.equipmentType === 1 || this.param.equipmentType === 2) {
+      if (this.param.equipmentType === 1 || this.param.equipmentType === 2 || this.param.equipmentType === 19) {
         echart.getZr().off('dblclick')
         echart.getZr().on('dblclick', () => {
           this.dialogVisible = true
@@ -848,21 +863,30 @@ export default {
         })
       }
     },
+    changeNodesChart (val) {
+      // console.log(val, '=======节点')
+      store.commit('nodeId', val)
+      this.queryRenkeChnl()
+    },
     queryRouteList () {
       let params = {
         mac: this.mac
       }
       getEffectAddr(params).then(res => {
         if (res.success) {
+          // console.log(res, '=========nodeID')
           if (res.datas.length > 0) {
             this.tableData = res.datas
             this.tableDatatitle = this.tableData[0].title
+            this.formInline.line = res.datas[0].nodeName
+            this.optionNode = res.datas
             // console.log(this.tableDatatitle)
             // console.log(res.datas, '=====res.datas')
-            if (this.param.equipmentType === (1 || 2)) {
+            if (this.param.equipmentType === (1 || 2 || 19)) {
               this.queryLineListData(this.tableData[0].addr)
             } else if (
               this.param.equipmentType === 11 ||
+              this.param.equipmentType === 18 ||
               this.param.equipmentType === 14
             ) {
               store.commit('nodeId', this.tableData[0].nodeId)
@@ -902,7 +926,7 @@ export default {
             })
             // console.log(res, '===dierge')
             if (res.data.analogIn1) {
-              this.ocDevice = 'IO'
+              // this.ocDevice = 'IO'
             } else {
               this.electricCurrent.xAxis = xAxis
               this.lineTemperature.xAxis = xAxis
@@ -1310,7 +1334,7 @@ export default {
             this.electricCurrent.xAxis = xAxis
             this.curRents.xAxis = xAxis
             if (res.data.analogIn1) {
-              this.ocDevice = 'IO'
+              // this.ocDevice = 'IO'
             }
             if (res.data.lstGLd || res.data.analogIn1) {
               this.residualCurrent.series = [
@@ -2753,6 +2777,7 @@ export default {
         if (newVal) {
           if (
             this.param.equipmentType === 1 ||
+            this.param.equipmentType === 19 ||
             this.param.equipmentType === 2
           ) {
             if (this.$store.state.detailsAddr === '') return false

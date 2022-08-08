@@ -42,13 +42,40 @@
               </el-row>
               <el-row style="margin-top: 2px" v-if="details.abnormalUnlockEnable && !details.enableNetCtrl">
                 <el-col :span="15">{{ $t('message.abnormalLocked') }}</el-col>
-                <el-col :span="9"><span class="custom-button hoverBtn pointer" @click="handleUnlock"><i class="iconfont el-icon-unlock"  style="font-weight: 600;"></i>{{ $t('table.unlock') }}</span></el-col>
+                <template v-if="abnormal ===true">
+                         <span
+                  class="custom-button hoverBtn pointer"
+                  @click="handleUnlock"
+                  ><i
+                    class="iconfont el-icon-unlock"
+                    style="font-weight: 600;"
+                  ></i
+                  >{{ $t('table.unlock') }}</span
+                >
+                </template>
+                <template v-if="abnormal ===false">
+                         <span
+                  class="custom-button hoverBtn not-allowed"
+                  @click="handleJurisdiction"
+                  ><i
+                    class="iconfont el-icon-unlock not-allowed"
+                    style="font-weight: 600;"
+                  ></i
+                  >{{ $t('table.unlock') }}</span
+                >
+                </template>
               </el-row>
               <el-row class="mt-15" v-if="details.remoteLockAndUnlockEnable">
                 <el-col :span="15">{{ details.remoteLock ? $t('message.remotelyLocked') : $t('message.notRemotelyLocked') }}</el-col>
                 <el-col :span="9">
-                  <span class="custom-button hoverBtn pointer" :class="details.remoteLock ? 'allowed' : ''" @click="handleLocking('true')"><i class="iconfont el-icon-lock"  style="font-weight: 600;"></i>{{ $t('table.locking') }}</span>
-                  <span class="custom-button hoverBtn pointer" :class="details.remoteLock ? '' : 'allowed'" @click="handleLocking('false')"><i class="iconfont el-icon-unlock"  style="font-weight: 600;"></i>{{ $t('table.unlock') }}</span>
+                  <template v-if="remote === true">
+                    <span class="custom-button hoverBtn pointer" :class="details.remoteLock ? 'allowed' : ''" @click="handleLocking('true')"><i class="iconfont el-icon-lock"  style="font-weight: 600;"></i>{{ $t('table.locking') }}</span>
+                    <span class="custom-button hoverBtn pointer" :class="details.remoteLock ? '' : 'allowed'" @click="handleLocking('false')"><i class="iconfont el-icon-unlock"  style="font-weight: 600;"></i>{{ $t('table.unlock') }}</span>
+                </template>
+                 <template v-if="remote === false">
+                    <span class="custom-button hoverBtn not-allowed"  @click="handleJurisdiction"><i class="iconfont el-icon-lock not-allowed"  style="font-weight: 600;"></i>{{ $t('table.locking') }}</span>
+                    <span class="custom-button hoverBtn not-allowed"  @click="handleJurisdiction"><i class="iconfont el-icon-unlock not-allowed"  style="font-weight: 600;"></i>{{ $t('table.unlock') }}</span>
+                  </template>
                 </el-col>
               </el-row>
             </div>
@@ -132,7 +159,7 @@
 import store from '@/store'
 import ConfigurationList from './ConfigurationList'
 import CommandFeedback from '../Common/CommandFeedback'
-import { getEffectAddr, verifyAuthCode, queryChannelDetailsByBoxAndAddr, modifyBoxsChnlClearAlarm, modifyBoxsChnlRemoteMute, winextloraQueryChannelDetails, remotectrl, winextloraCmd, abnormalSwitchUnlock, remoteSwitchLock } from '@/api/api'
+import { getEffectAddr, queryPageAuth, verifyAuthCode, queryChannelDetailsByBoxAndAddr, modifyBoxsChnlClearAlarm, modifyBoxsChnlRemoteMute, winextloraQueryChannelDetails, remotectrl, winextloraCmd, abnormalSwitchUnlock, remoteSwitchLock } from '@/api/api'
 export default {
   props: {
     param: {
@@ -152,7 +179,9 @@ export default {
       group: false,
       timerID: null,
       iccid: this.$store.state.iccid,
-      instructionsFlag: false
+      instructionsFlag: false,
+      remote: false,
+      abnormal: false
     }
   },
   created () {
@@ -166,6 +195,7 @@ export default {
   },
   methods: {
     init () {
+      this.handleQueryPageAuth()
       this.getAddrs()
     },
     getAddrs () {
@@ -833,6 +863,31 @@ export default {
         }, delay)
       }
       timer()
+    },
+    handleQueryPageAuth () {
+      let params = {
+        resKeys: 'AUTH_PROJECT_USE,AUTH_PROJECT_USE',
+        operKeys: 'REMOTE_SWITCH_LOCK,ABNORMAL_SWITCH_UNLOCK'
+      }
+      queryPageAuth(params)
+        .then(res => {
+          if (res.success) {
+            this.remote = res.data[0].result
+            this.abnormal = res.data[1].result
+          } else if (res.code === '-1') {
+          } else {
+            this.$message({
+              message: res.message,
+              type: 'error'
+            })
+          }
+        })
+    },
+    handleJurisdiction () {
+      this.$message({
+        message: '当前账号没有权限',
+        type: 'warning'
+      })
     }
   },
   destroyed () {

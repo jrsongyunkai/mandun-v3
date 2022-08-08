@@ -49,6 +49,22 @@
           v-el_scrollBar:scrollBar
           style="width: 100%;">
           <el-table-column
+            align="center"
+            :label="$t('dialog.deviceAlias')"
+           >
+            <template slot-scope="scope">
+              <span class="c-default pointer">{{scope.row.boxName}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            :label="$t('table.deviceNo')"
+           >
+            <template slot-scope="scope">
+              <span class="c-default pointer" @click="handle(scope.row)">{{scope.row.mac}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="id"
             align="center"
             :label="$t('table.jobNumber')">
@@ -58,14 +74,7 @@
             align="center"
             :label="$t('table.location')">
           </el-table-column>
-          <el-table-column
-            width="130px"
-            align="center"
-            :label="$t('table.deviceNo')">
-            <template slot-scope="scope">
-              <span class="c-default pointer" @click="handle(scope.row)">{{scope.row.mac}}</span>
-            </template>
-          </el-table-column>
+
           <el-table-column
             prop="channel"
             align="center"

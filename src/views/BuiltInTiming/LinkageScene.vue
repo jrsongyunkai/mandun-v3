@@ -130,7 +130,7 @@
                             width="200px"
                             :label="$t('btns.condition')">
                             <template slot-scope="scope">
-                              <span v-if="scope.row.typeNumber === 9003">{{'水浸报警'||'_'}}</span>
+                              <span v-if="scope.row.typeNumber === 2007">{{'水浸报警'||'_'}}</span>
                               <span v-else-if=" (scope.row.equipmentrValue === 11 || scope.row.others.equipmentType === 11)">{{ (scope.row.elecType === 4 ? $t('menu.temperature') : $t('menu.humidity')) + (scope.row.compType === 1 ? $t('menu.above') : $t('menu.below')) + '\xa0\xa0' + scope.row.compValue }}</span>
                               <span v-else-if="scope.row.equipmentrValue === 14 || scope.row.others.equipmentType === 14">{{ $t('echarts.illumination') + $t('echarts.celsius') + (scope.row.compType === 1 ? $t('menu.above') : $t('menu.below')) + '\xa0\xa0' + scope.row.compValue }}</span>
                               <span v-else-if="scope.row.equipmentrValue === 5 || scope.row.others.equipmentType === 5">{{(scope.row.elecType === 4?'温度': $t('control.pressure'))  + (scope.row.compType === 1 ? $t('menu.above') : $t('menu.below')) + '\xa0\xa0' + scope.row.compValue }}</span>
@@ -687,7 +687,7 @@ export default {
       }],
       leveltionsType: [{value: 4, label: '温度'}, {value: 7, label: '液位'}],
       pressureType: [{value: 4, label: '温度'}, {value: 6, label: '压力'}],
-      aLarmType: [{value: 9003, label: '水浸报警'}],
+      aLarmType: [{value: 2007, label: '水浸报警'}],
       aLarmValue: '',
       ifValue: '',
       equipmentrValue: '1,2',
@@ -1254,6 +1254,8 @@ export default {
           this.preList[this.index].others.macName = this.preData.name
           // console.log(this.preList, '==============this.preList5')
         } else if (this.equipmentrValue === 18) {
+          this.preList[this.index].others.mac = this.preData.mac
+          this.preList[this.index].others.macName = this.preData.name
           this.preList[this.index].typeNumber = this.aLarmValue
         } else if (this.equipmentrValue === '1,2') {
           let titleArr = []
@@ -1547,7 +1549,7 @@ export default {
         name: row.others.macName,
         tags: tags
       }
-      if (row.typeNumber === 9003) {
+      if (row.typeNumber === 2007) {
         this.aLarmValue = row.typeNumber
       }
 

@@ -123,11 +123,17 @@
                 <span class="pointer" @click="handleMore(scope.row)">{{ scope.row.others.maintainNum }}</span>
               </template>
             </el-table-column>
+             <el-table-column :label="$t('table.yesterday') + $t('main.energyUsed') +'(度)'" align="center">
+              <template slot-scope="scope">
+                <span class="pointer">{{ scope.row.others.yesterdayPower }}</span>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('table.thisMonth') + $t('main.energyUsed') +'(度)'" align="center">
               <template slot-scope="scope">
                 <span class="pointer">{{ scope.row.others.thisMonthPower }}</span>
               </template>
             </el-table-column>
+
           </el-table>
           </el-col>
           </el-row>

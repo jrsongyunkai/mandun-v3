@@ -16,6 +16,7 @@
             type="text"
             class="fw add-btn ml-20"
             @click="instantRecharge"
+            v-show="resKeys === false"
           >{{ $t('system.recharge') }}</el-button>
         </el-form-item>
       </el-form>
@@ -278,6 +279,12 @@ export default {
   props: {
     category: {
       type: Number,
+      default () {
+        return {}
+      }
+    },
+    resKeys: {
+      type: Boolean,
       default () {
         return {}
       }

@@ -370,6 +370,7 @@ module.exports = {
     onlineReminderW: '上线提醒'
   },
   table: {
+    yesterday: '昨日',
     deviceNo: '设备号',
     jobNumber: '事件ID',
     project: '项目',
@@ -418,6 +419,7 @@ module.exports = {
     closeValve: '闭阀',
     locking: '锁定',
     unlock: '解锁',
+    cancelVoice: '消音',
     openingClosing: '分/合闸时间',
     beenClosed: '已通',
     beenOpend: '已断',
@@ -565,6 +567,7 @@ module.exports = {
     warningsNumber: '预警数',
     basicInformation: '基本信息',
     projectAddress: '项目地址',
+    deviceAddress: '设备地址',
     industryName: '行业类型',
     prjManager: '联系人',
     prjTel: '电话',
@@ -658,6 +661,7 @@ module.exports = {
     abnormalLocked: '已经被异常分闸锁定了',
     remotelyLocked: '已经被远程锁定了',
     notRemotelyLocked: '没有被远程锁定',
+    remoteVoice: '可远程进行消音',
     remoteLock: '远程锁定'
   },
   menu: {
@@ -819,6 +823,7 @@ module.exports = {
   control: {
     protectionSwitch: '智能空开',
     electricalFire: '电气火灾',
+    protectionPanel: '智能面板',
     hydrologicalMonitoring: '水浸、水位水压',
     flueGasMonitoring: '烟雾、可燃气体',
     streetLamp: 'LORA专网',

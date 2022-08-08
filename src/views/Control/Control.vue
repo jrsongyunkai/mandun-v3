@@ -998,7 +998,10 @@ export default {
       }
     },
     handleViewScene (ele, row) {
-      this.senceType = row.type
+      if (row) {
+        this.senceType = row.type
+      }
+
       let params = {
         projectCode: this.$store.state.projectCode,
         sceneId: ele

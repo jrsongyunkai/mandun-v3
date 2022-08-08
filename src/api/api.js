@@ -1123,3 +1123,6 @@ export const httpCommand = (params) => {
 export const modActionType = (params) => {
   return Request.POST('/project/main/scene/addr/modActionType.as', params)
 }
+export const findBoxByMac = (params) => {
+  return Request.POST('/box/findBoxByMac.as', params)
+}

@@ -263,6 +263,15 @@
               <el-scrollbar style="height: 300px">
                 <el-table :data="tableData" size="small" style="width: 100%;">
                   <el-table-column
+                    align="center"
+                    :label="$t('dialog.deviceAlias')"
+                     width="200px"
+                   >
+                    <template slot-scope="scope">
+                      <span class="c-default pointer">{{scope.row.name}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
                     prop="mac"
                     align="center"
                     :label="$t('dialog.deviceNo')"

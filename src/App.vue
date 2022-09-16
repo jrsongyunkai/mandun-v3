@@ -96,7 +96,7 @@ html, body
     border-bottom 1px solid #666
 .el-table--enable-row-hover .el-table__body tr
     &:hover>td
-        background-color transparent
+        background-color unset !important
 .el-table--enable-row-hover .el-table__body tr
     &:hover>td.danger-row
         background-color #544558
@@ -110,10 +110,10 @@ html, body
 .fade-enter,.fade-leave-to
     opacity 0
 .el-table, .el-table__expanded-cell, .el-table th, .el-table tr
-    background-color transparent
+    background-color transparent !important
     color #fff
 .el-table td, .el-table th.is-leaf
-    border-bottom 1px solid #303a5e
+    border-bottom 1px solid #303a5e !important
 .el-table--border::after,.el-table--group::after,.el-table::before
     background-color transparent
 .el-pagination
@@ -247,9 +247,9 @@ html, body
 .el-table--border
     border 1px solid #303a5e
 .el-table--border td, .el-table--border th
-    border-right 1px solid #303a5e
+    border-right 1px solid #303a5e !important
 .el-table--border th.gutter:last-of-type
-    border-bottom 1px solid #303a5e
+    border-bottom 1px solid #303a5e !important
 .el-table--scrollable-y .el-table__body-wrapper
   overflow hidden
 .trip-warning

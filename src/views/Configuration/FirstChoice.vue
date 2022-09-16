@@ -173,7 +173,13 @@ export default {
       this.queryPreference()
     },
     handleAddProject () {
-      if (this.length === this.data.length - 1) return false
+      if (this.length === this.data.length - 1) {
+        this.$message({
+          message: '请先点击表格中新添加项保存按钮后再点击添加',
+          type: 'error'
+        })
+        return false
+      }
       this.projectsFlag = true
       this.projectLists = []
     },

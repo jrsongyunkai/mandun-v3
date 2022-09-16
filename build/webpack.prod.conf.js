@@ -141,7 +141,8 @@ const webpackConfig = merge(baseWebpackConfig, {
       onEnd: {
         copy: [
           {source: './dist', destination: './tmp/estate_v3'},
-          {source: './appdl.html', destination: './tmp/estate_v3'}
+          {source: './appdl.html', destination: './tmp/estate_v3'},
+          {source: './appdl-list.html', destination: './tmp/estate_v3'}
         ],
         mkdir: ['./tmp/estate_v3/'],
         archive: [

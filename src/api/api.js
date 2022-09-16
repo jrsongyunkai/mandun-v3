@@ -1126,3 +1126,6 @@ export const modActionType = (params) => {
 export const findBoxByMac = (params) => {
   return Request.POST('/box/findBoxByMac.as', params)
 }
+export const portalGblbpk = (params) => {
+  return Request.FETCH('/portal/v5/gbl/bpk.as', params)
+}

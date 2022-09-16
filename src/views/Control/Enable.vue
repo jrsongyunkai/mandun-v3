@@ -108,7 +108,7 @@ export default {
           value.indexOf('15-' + this.$t('types.currentW') + this.$t('btns.trip')) > -1 ? 1 : 0,
           value.indexOf('16-' + this.$t('types.reserved')) > -1 ? 1 : 0,
           value.indexOf('17-' + this.$t('types.reserved')) > -1 ? 1 : 0,
-          value.indexOf('18-' + this.$t('types.reserved')) > -1 ? 1 : 0,
+          value.indexOf('18-' + this.$t('types.malignantLoad') + this.$t('control.enableTrip')) > -1 ? 1 : 0,
           value.indexOf('19-' + this.$t('types.reserved')) > -1 ? 1 : 0,
           value.indexOf('20-' + this.$t('types.reserved')) > -1 ? 1 : 0,
           value.indexOf('21-' + this.$t('types.temperatureA') + this.$t('btns.trip')) > -1 ? 1 : 0,

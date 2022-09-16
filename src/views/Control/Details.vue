@@ -796,7 +796,6 @@ export default {
   },
   mounted () {
     this.init()
-    this.queryRouteList()
     if (this.param.equipmentType === 18) {
       this.queryRenkeChnl()
     }
@@ -834,8 +833,6 @@ export default {
             this.queryChannelHistory()
           }
         }
-        // this.queryChtqdqMeterReadingData()
-        // this.queryLineListData()
       } else if (this.param.equipmentType === 6) {
         this.querySmoke()
       } else if (this.param.equipmentType === 12) {
@@ -908,6 +905,16 @@ export default {
       this.rowAddr = row.addr
     },
     onSubmit () {
+      // this.value1 ? store.commit('historyDate', this.value1) : store.commit('historyDate', [this.$func.getNowFormatDate(), this.$func.getNowFormatDate()])
+      // console.log(this.$store.state.historyDate, '====this.$store.state.historyDate')
+      console.log(this.value1)
+      if (!this.value1) {
+        this.$message({
+          message: '请先选择时间',
+          type: 'error'
+        })
+        return false
+      }
       let addr = this.rowAddr !== '' ? this.rowAddr : this.tableData[0].addr
       this.queryLineListData(addr)
     },
@@ -921,9 +928,7 @@ export default {
       channelHistory(params)
         .then(res => {
           if (res.success) {
-            let xAxis = res.data.xAxis.map(function (str) {
-              return str.split(' ')[1]
-            })
+            let xAxis = res.data.xAxis
             // console.log(res, '===dierge')
             if (res.data.analogIn1) {
               // this.ocDevice = 'IO'
@@ -1312,52 +1317,27 @@ export default {
           ? this.$store.state.historyDate
           : this.$func.getNowFormatDate()
       }
+      // console.log(this.$store.state.historyDate, '========params')
       channelHistory(params)
         .then(res => {
           if (res.success) {
             let xAxis = res.data.xAxis.map(function (str) {
               return str.split(' ')[1]
             })
-            //  if(res.data.analogIn1 ||res.data.analogIn2||res.data.analogIn3||res.data.analogIn4){
-            // }
             // console.log(res, '=================res')
             this.residualCurrent.xAxis = xAxis
-            this.leakageCurrent.xAxis = xAxis
             this.residuals.xAxis = xAxis
             this.voltage.xAxis = xAxis
-            this.lineVoltage.xAxis = xAxis
             this.volTage.xAxis = xAxis
             this.temperature.xAxis = xAxis
-            this.lineTemperature.xAxis = xAxis
             this.temPeraTure.xAxis = xAxis
             this.current.xAxis = xAxis
-            this.electricCurrent.xAxis = xAxis
             this.curRents.xAxis = xAxis
             if (res.data.analogIn1) {
               // this.ocDevice = 'IO'
             }
             if (res.data.lstGLd || res.data.analogIn1) {
               this.residualCurrent.series = [
-                {
-                  name: this.$t('system.remaining') + this.$t('main.ampere'),
-                  type: 'line',
-                  data: res.data.lstGLd,
-                  smooth: true,
-                  showAllSymbol: true,
-                  symbolSize: 2
-                },
-                {
-                  name: this.$t('table.status'),
-                  type: 'line',
-                  data: res.data.ocList,
-                  color: '#909399',
-                  smooth: false,
-                  showAllSymbol: false,
-                  symbolSize: 0,
-                  lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
-                }
-              ]
-              this.leakageCurrent.series = [
                 {
                   name: this.$t('system.remaining') + this.$t('main.ampere'),
                   type: 'line',
@@ -1389,33 +1369,10 @@ export default {
 
               ]
             } else {
-              this.leakageCurrent.series = []
               this.residuals.series = []
             }
             if (res.data.lstGV || res.data.analogIn3) {
               if (!res.data.lstAV) {
-                this.lineVoltage.series = [
-                  {
-                    name: this.$t('main.volt'),
-                    type: 'line',
-                    data: res.data.lstGV,
-                    color: '#71e1e4',
-                    lineStyle: { color: '#71e1e4' },
-                    smooth: true,
-                    showAllSymbol: true,
-                    symbolSize: 2
-                  },
-                  {
-                    name: this.$t('table.status'),
-                    type: 'line',
-                    data: res.data.ocList,
-                    color: '#909399',
-                    smooth: false,
-                    showAllSymbol: false,
-                    symbolSize: 0,
-                    lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
-                  }
-                ]
                 this.voltage.series = [
                   {
                     name: this.$t('main.volt'),
@@ -1572,28 +1529,6 @@ export default {
             }
             if (res.data.lstGT || res.data.analogIn2) {
               if (!res.data.lstAT) {
-                this.lineTemperature.series = [
-                  {
-                    name: this.$t('menu.temperature'),
-                    type: 'line',
-                    data: res.data.lstGT,
-                    color: '#71e1e4',
-                    lineStyle: { color: '#71e1e4' },
-                    smooth: true,
-                    showAllSymbol: true,
-                    symbolSize: 2
-                  },
-                  {
-                    name: this.$t('table.status'),
-                    type: 'line',
-                    data: res.data.ocList,
-                    color: '#909399',
-                    smooth: false,
-                    showAllSymbol: false,
-                    symbolSize: 0,
-                    lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
-                  }
-                ]
                 this.temperature.series = [
                   {
                     name: this.$t('menu.temperature'),
@@ -1768,28 +1703,6 @@ export default {
             }
             if (res.data.lstGA || res.data.analogIn4) {
               if (!res.data.lstAA) {
-                this.electricCurrent.series = [
-                  {
-                    name: this.$t('control.current'),
-                    type: 'line',
-                    data: res.data.lstGA,
-                    color: '#71e1e4',
-                    lineStyle: { color: '#71e1e4' },
-                    smooth: true,
-                    showAllSymbol: true,
-                    symbolSize: 2
-                  },
-                  {
-                    name: this.$t('table.status'),
-                    type: 'line',
-                    data: res.data.ocList,
-                    color: '#909399',
-                    smooth: false,
-                    showAllSymbol: false,
-                    symbolSize: 0,
-                    lineStyle: { width: 0, color: 'rgba(0, 0, 0, 0)' }
-                  }
-                ]
                 this.current.series = [
                   {
                     name: this.$t('control.current'),
@@ -2466,22 +2379,10 @@ export default {
               })
             }
             this.residualCurrent.xAxis = xAxis
-            this.residuals.xAxis = xAxis
             this.voltage.xAxis = xAxis
-            this.volTage.xAxis = xAxis
             this.temperature.xAxis = xAxis
-            this.temPeraTure.xAxis = xAxis
             this.current.xAxis = xAxis
-            this.curRents.xAxis = xAxis
             this.residualCurrent.series = [
-              {
-                name: this.$t('menu.leakageCurrent'),
-                type: 'line',
-                data: res.data.lstLki,
-                smooth: true
-              }
-            ]
-            this.residuals.series = [
               {
                 name: this.$t('menu.leakageCurrent'),
                 type: 'line',
@@ -2497,14 +2398,6 @@ export default {
                 smooth: true
               }
             ]
-            this.volTage.series = [
-              {
-                name: this.$t('main.volt'),
-                type: 'line',
-                data: res.data.lstVol,
-                smooth: true
-              }
-            ]
             this.temperature.series = [
               {
                 name: this.$t('menu.temperature'),
@@ -2513,23 +2406,7 @@ export default {
                 smooth: true
               }
             ]
-            this.temPeraTure.series = [
-              {
-                name: this.$t('menu.temperature'),
-                type: 'line',
-                data: res.data.lstTmp,
-                smooth: true
-              }
-            ]
             this.current.series = [
-              {
-                name: this.$t('main.ampere'),
-                type: 'line',
-                data: res.data.lstCur,
-                smooth: true
-              }
-            ]
-            this.curRents.series = [
               {
                 name: this.$t('main.ampere'),
                 type: 'line',
@@ -2567,7 +2444,7 @@ export default {
           if (res.success) {
             if (Object.keys(res.data).length > 0) {
               let xAxis = []
-              if (JSON.srtingify(res.data) !== '{}') {
+              if (res.data && res.data.timeList) {
                 xAxis = res.data.timeList.map(function (str) {
                   return str.split(' ')[1]
                 })

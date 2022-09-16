@@ -612,6 +612,7 @@ import {
   chgPwd,
   forTip,
   updateStaffInfo,
+  portalGblbpk,
   findStaffInfo
 } from '@/api/api'
 import { wsClose } from '@/untils/websocket'
@@ -707,7 +708,9 @@ export default {
       devicePasswordValue: false
     }
   },
-  created () {},
+  created () {
+    this.getModulus()
+  },
   inject: ['getReload'],
   mounted () {
     this.init()
@@ -857,6 +860,20 @@ export default {
           '&endYm=' +
           this.rangeExportForm.value[1]
       )
+    },
+    getModulus () {
+      if (!this.$store.state.modulus || !this.$store.state.exponent) {
+        //  console.log(1111)
+        portalGblbpk({fk: ''}).then(res => {
+          console.log(22222)
+          if (res.success) {
+            store.commit('exponent', res.data.exponent)
+            store.commit('modulus', res.data.modulus)
+          }
+          // console.log(res, '===========portalGblbpk')
+        })
+      }
+      // console.log(3333)
     },
     querySearchAsync (queryString, cb) {
       let allProjects = this.$store.state.allProjects.data

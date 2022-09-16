@@ -30,11 +30,20 @@
             </el-form-item>
         </el-form>
         <el-footer>
-          <div v-if="chrome" class="browser-detection">{{ $t('footer.tips') }}<a href="https://www.google.com/chrome/" class="chrome-download" target="_blank">{{ $t('footer.browser') }}</a></div>
-          <span class="cc1">{{ cc1 }}</span>
-          <span class="cc2"><a href="http://beian.miit.gov.cn" target="_blank">{{ cc2 }}</a></span>
-          <span>{{ $t('footer.current') + $t('table.version') + '\r' +  version }}</span>
+          <div style="display:flex;align-items: center; justify-content: center">
+            <div v-if="chrome" class="browser-detection">{{ $t('footer.tips') }}<a href="https://www.google.com/chrome/" class="chrome-download" target="_blank">{{ $t('footer.browser') }}</a></div>
+          <div style="padding:10px">{{ $t('footer.current') + $t('table.version') + '\r' +  version }}</div>
+          </div>
+          <div style="display:flex;align-items: center; justify-content: center;padding-left:110px">
+             <span class="cc1" style="font-size:12px">{{ cc1 }}&nbsp;</span>
+          <!-- cc2备案号 -->
+          <span class="cc2" style="font-size:12px"><a href="http://beian.miit.gov.cn" target="_blank">{{ cc2 }}</a></span>
+          <!-- cc3网址 -->
           <span class="cc3"><a :href="cc3Href" target="_blank">{{ cc3 }}</a></span>
+          <div style="color:#7fcde8;font-size:12px;">{{text}}</div>
+          </div>
+          <!-- cc1是版权 ©2016-2022 -->
+
         </el-footer>
     </div>
 </template>
@@ -67,6 +76,7 @@ export default {
       }
     }
     return {
+      text: '深圳曼顿科技有限公司',
       chrome: false,
       prevStatus: true,
       codeCheckFlag: false,
@@ -154,6 +164,7 @@ export default {
             store.commit('modulus', config.modulus)
             store.commit('platformName', document.title)
             store.commit('pageCustom', config.pageCustom)
+            console.log(config.pageCustom,'=====config.pageCustom');
             if (this.$store.state.pageCustom.login.logo_top !== undefined) {
               this.logo = this.$store.state.pageCustom.login.logo_top.image !== undefined ? this.$store.state.pageCustom.login.logo_top.image : ''
               this.lWidth = this.$store.state.pageCustom.login.logo_top.width !== undefined ? this.$store.state.pageCustom.login.logo_top.width : 'auto'
@@ -330,7 +341,6 @@ export default {
     left 0
     top 50%
     width 100%
-    text-align center
     font-size 14px
     span a
       text-decoration: none

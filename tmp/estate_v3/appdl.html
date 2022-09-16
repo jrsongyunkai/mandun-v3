@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<title>准备下载...</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-siteapp,no-cache,no-store" />
+<meta http-equiv="Expires" content="0">
+<style>
+body {
+	font-family: "微软雅黑", Helvetica, Georgia, Arial, sans-serif;
+	font-size: 12px;
+	padding:0;
+	margin:0;
+}
+</style>
+<script type="text/javascript">
+var personal=[
+ 'https://www.pgyer.com/dJGs'
+];
+var estate=[
+ 'https://www.pgyer.com/LBbv'
+];
+var other=[
+ 'https://www.pgyer.com/LBbv'
+];
+function gp(n){var a=window.location.href;var b=a.indexOf("?");var c=a.substring(b+1);var d=c.split("&");for(var i=0;i<d.length;i++){var e=d[i];b=e.indexOf("=");if(e.substring(0,b).toLowerCase()==n.toLowerCase()){return e.substring(b+1);}}return '';}
+window.onload=function(){
+  var f = gp('f');
+  if(f=='1')
+    window.location.href = personal[Math.floor(Math.random()*100)%personal.length];
+  else if(f=='2')
+	window.location.href = estate[Math.floor(Math.random()*100)%estate.length];
+  else if(f=='3')
+		window.location.href = other[Math.floor(Math.random()*100)%other.length];
+}
+</script>
+</head>
+<body>
+	<div style="width:99%;">
+		<div style="width:150px;margin:20px auto;">
+			<h2>APP下载,请在浏览器打开.</h2>
+		</div>
+	</div>
+</body>
+</html>

@@ -1383,14 +1383,16 @@ export default {
       } else if (type === 'trip') {
         this.adjustments[index + ((this.currentPage - 1) * 10)].enableTripShowHide = !this.adjustments[index + ((this.currentPage - 1) * 10)].enableTripShowHide
         this.adjustments[index + ((this.currentPage - 1) * 10)].enableAlarmShowHide = false
-        this.bits = [this.$t('types.shortCircuitA') + this.$t('btns.trip'), this.$t('types.surgeA') + this.$t('btns.trip'), this.$t('types.overloadA') + this.$t('btns.trip'), this.$t('types.temperatureW') + this.$t('btns.trip'), this.$t('types.leakageA') + this.$t('btns.trip'), this.$t('types.overcurrentA') + this.$t('btns.trip'), this.$t('types.overpressureA') + this.$t('btns.trip'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.missingPhaseA') + this.$t('btns.trip'), this.$t('types.fireA') + this.$t('btns.trip'), this.$t('types.undervoltageA') + this.$t('btns.trip'), this.$t('types.overpressureW') + this.$t('btns.trip'), this.$t('types.undervoltageW') + this.$t('btns.trip'), this.$t('types.leakageW') + this.$t('btns.trip'), this.$t('types.currentW') + this.$t('btns.trip'), this.$t('types.reserved'), this.$t('types.malignantLoad') + this.$t('btns.trip') + this.$t('table.enable'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.temperatureA') + this.$t('btns.trip'), this.$t('types.unbalancedA') + this.$t('btns.trip'), this.$t('types.wrongPhaseTrip'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved')]
+        this.bits = [this.$t('types.shortCircuitA') + this.$t('btns.trip'), this.$t('types.surgeA') + this.$t('btns.trip'), this.$t('types.overloadA') + this.$t('btns.trip'), this.$t('types.temperatureW') + this.$t('btns.trip'), this.$t('types.leakageA') + this.$t('btns.trip'), this.$t('types.overcurrentA') + this.$t('btns.trip'), this.$t('types.overpressureA') + this.$t('btns.trip'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.missingPhaseA') + this.$t('btns.trip'), this.$t('types.fireA') + this.$t('btns.trip'), this.$t('types.undervoltageA') + this.$t('btns.trip'), this.$t('types.overpressureW') + this.$t('btns.trip'), this.$t('types.undervoltageW') + this.$t('btns.trip'), this.$t('types.leakageW') + this.$t('btns.trip'), this.$t('types.currentW') + this.$t('btns.trip'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.malignantLoad') + this.$t('control.enableTrip'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.temperatureA') + this.$t('btns.trip'), this.$t('types.unbalancedA') + this.$t('btns.trip'), this.$t('types.wrongPhaseTrip'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved'), this.$t('types.reserved')]
       }
       let arr = obj.split('').reverse()
       let _arr = []
       for (let i = 0; i < arr.length; i++) {
         if (arr[i] === '1') _arr.push(i + '-' + this.bits[i])
       }
+
       this.enableForm.enableBits = _arr
+      console.log(this.enableForm, obj, '=======')
       this.enableForm.enableBitsObj = obj
       let _len = this.adjustments.length
       for (let i = 0; i < _len; i++) {

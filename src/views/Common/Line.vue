@@ -39,7 +39,6 @@ export default {
   methods: {
     init () {
       let that = this
-
       const options = {
         title: {
           show: this.options.title.show,

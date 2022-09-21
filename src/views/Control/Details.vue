@@ -796,9 +796,9 @@ export default {
   },
   mounted () {
     this.init()
-    if (this.param.equipmentType === 18) {
-      this.queryRenkeChnl()
-    }
+    // if (this.param.equipmentType === 18) {
+    //   this.queryRenkeChnl()
+    // }
     this.$nextTick(() => {
       this.setTimer(this.init, config.pollingInterval.channelHistory * 1000)
       if (this.param.equipmentType === 11 || this.param.equipmentType === 14 || this.param.equipmentType === 18) {
